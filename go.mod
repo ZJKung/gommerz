@@ -12,6 +12,9 @@ require (
 )
 
 require (
+	github.com/mailru/easyjson v0.7.1 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
+	github.com/segmentio/ksuid v1.0.4 // indirect
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
@@ -28,4 +31,5 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/sosodev/duration v1.3.1 // indirect
 	google.golang.org/grpc v1.70.0
+	gopkg.in/olivere/elastic.v5 v5.0.86
 )

@@ -3,11 +3,12 @@ package main
 import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/zjkung/gommerz/account"
+	"github.com/zjkung/gommerz/catalog"
 )
 
 type Server struct {
 	accountClient *account.Client
-	// categoryClient *category.Client
+	catalogClient *catalog.Client
 	// orderClient     *order.Client
 }
 
@@ -16,7 +17,7 @@ func NewGraphQLServer(accountUrl, categoryUrl, productUrl string) (*Server, erro
 	if err != nil {
 		return nil, err
 	}
-	categoryClient, err := category.NewCategoryClient(categoryUrl)
+	catalogClient, err := catalog.NewClient(categoryUrl)
 	if err != nil {
 		accountClient.Close()
 		return nil, err
@@ -24,12 +25,12 @@ func NewGraphQLServer(accountUrl, categoryUrl, productUrl string) (*Server, erro
 	orderClient, err := order.NewProductClient(productUrl)
 	if err != nil {
 		accountClient.Close()
-		categoryClient.Close()
+		catalogClient.Close()
 		return nil, err
 	}
 	return &Server{
 		accountClient,
-		categoryClient,
+		catalogClient,
 		orderClient,
 	}, nil
 }
