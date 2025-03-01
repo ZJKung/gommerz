@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net"
-	"strconv"
 
 	"github.com/zjkung/gommerz/catalog/pb"
 	"google.golang.org/grpc"
@@ -30,11 +29,7 @@ func (s *grpcServer) PostProduct(ctx context.Context, req *pb.PostProductRequest
 	if err != nil {
 		return nil, err
 	}
-	price, err := strconv.ParseFloat(p.Price, 64)
-	if err != nil {
-		return nil, err
-	}
-	return &pb.PostProductResponse{Product: &pb.Product{Id: p.ID, Name: p.Name, Description: p.Description, Price: price}}, nil
+	return &pb.PostProductResponse{Product: &pb.Product{Id: p.ID, Name: p.Name, Description: p.Description, Price: p.Price}}, nil
 }
 
 func (s *grpcServer) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb.GetProductResponse, error) {
@@ -42,11 +37,7 @@ func (s *grpcServer) GetProduct(ctx context.Context, req *pb.GetProductRequest) 
 	if err != nil {
 		return nil, err
 	}
-	price, err := strconv.ParseFloat(p.Price, 64)
-	if err != nil {
-		return nil, err
-	}
-	return &pb.GetProductResponse{Product: &pb.Product{Id: p.ID, Name: p.Name, Description: p.Description, Price: price}}, nil
+	return &pb.GetProductResponse{Product: &pb.Product{Id: p.ID, Name: p.Name, Description: p.Description, Price: p.Price}}, nil
 }
 func (s *grpcServer) GetProducts(ctx context.Context, req *pb.GetProductsRequest) (*pb.GetProductsResponse, error) {
 
@@ -64,11 +55,7 @@ func (s *grpcServer) GetProducts(ctx context.Context, req *pb.GetProductsRequest
 	}
 	resp := &pb.GetProductsResponse{Products: make([]*pb.Product, 0)}
 	for _, p := range products {
-		price, err := strconv.ParseFloat(p.Price, 64)
-		if err != nil {
-			return nil, err
-		}
-		resp.Products = append(resp.Products, &pb.Product{Id: p.ID, Name: p.Name, Description: p.Description, Price: price})
+		resp.Products = append(resp.Products, &pb.Product{Id: p.ID, Name: p.Name, Description: p.Description, Price: p.Price})
 	}
 	return resp, nil
 }

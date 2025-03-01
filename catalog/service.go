@@ -2,7 +2,6 @@ package catalog
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/segmentio/ksuid"
 )
@@ -16,10 +15,10 @@ type Service interface {
 }
 
 type Product struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Price       string `json:"price"`
+	ID          string  `json:"id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
 }
 
 type catalogService struct {
@@ -35,7 +34,7 @@ func (s *catalogService) CreateProduct(ctx context.Context, name, description st
 		ID:          ksuid.New().String(),
 		Name:        name,
 		Description: description,
-		Price:       fmt.Sprintf("%.2f", price),
+		Price:       price,
 	}
 	err := s.repo.PutProduct(ctx, *product)
 	if err != nil {

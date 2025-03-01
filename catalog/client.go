@@ -2,7 +2,6 @@ package catalog
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/zjkung/gommerz/catalog/pb"
 	"google.golang.org/grpc"
@@ -33,7 +32,7 @@ func (c *Client) PostProduct(ctx context.Context, name, description string, pric
 	if err != nil {
 		return nil, err
 	}
-	return &Product{ID: r.Product.Id, Name: r.Product.Name, Description: r.Product.Description, Price: fmt.Sprintf("%f", r.Product.Price)}, nil
+	return &Product{ID: r.Product.Id, Name: r.Product.Name, Description: r.Product.Description, Price: r.Product.Price}, nil
 }
 
 func (c *Client) GetProduct(ctx context.Context, id string) (*Product, error) {
@@ -41,7 +40,7 @@ func (c *Client) GetProduct(ctx context.Context, id string) (*Product, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Product{ID: r.Product.Id, Name: r.Product.Name, Description: r.Product.Description, Price: fmt.Sprintf("%f", r.Product.Price)}, nil
+	return &Product{ID: r.Product.Id, Name: r.Product.Name, Description: r.Product.Description, Price: r.Product.Price}, nil
 }
 
 func (c *Client) GetProducts(ctx context.Context, query string, ids []string, skip, take uint64) ([]*Product, error) {
@@ -59,7 +58,7 @@ func (c *Client) GetProducts(ctx context.Context, query string, ids []string, sk
 	}
 	products := make([]*Product, 0)
 	for _, p := range r.Products {
-		products = append(products, &Product{ID: p.Id, Name: p.Name, Description: p.Description, Price: fmt.Sprintf("%f", p.Price)})
+		products = append(products, &Product{ID: p.Id, Name: p.Name, Description: p.Description, Price: p.Price})
 	}
 	return products, nil
 }
