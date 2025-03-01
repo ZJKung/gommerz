@@ -4,12 +4,13 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/zjkung/gommerz/account"
 	"github.com/zjkung/gommerz/catalog"
+	"github.com/zjkung/gommerz/order"
 )
 
 type Server struct {
 	accountClient *account.Client
 	catalogClient *catalog.Client
-	// orderClient     *order.Client
+	orderClient   *order.Client
 }
 
 func NewGraphQLServer(accountUrl, categoryUrl, productUrl string) (*Server, error) {
@@ -22,7 +23,7 @@ func NewGraphQLServer(accountUrl, categoryUrl, productUrl string) (*Server, erro
 		accountClient.Close()
 		return nil, err
 	}
-	orderClient, err := order.NewProductClient(productUrl)
+	orderClient, err := order.NewClient(productUrl)
 	if err != nil {
 		accountClient.Close()
 		catalogClient.Close()
@@ -36,11 +37,11 @@ func NewGraphQLServer(accountUrl, categoryUrl, productUrl string) (*Server, erro
 }
 
 func (s *Server) Mutation() MutationResolver {
-	return MutationResolverImp{s}
+	return &mutationResolver{s}
 }
 
 func (s *Server) Query() QueryResolver {
-	return QueryResolverImp{s}
+	return &queryResolver{s}
 }
 
 func (s *Server) Account() AccountResolver {
