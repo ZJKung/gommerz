@@ -10,8 +10,8 @@ import (
 
 type Config struct {
 	DatabaseURL string `envconfig:"DATABASE_URL" required:"true"`
-	AccountURL  string `envconfig:"ACCOUNT_URL" required:"true"`
-	CatalogURL  string `envconfig:"CATALOG_URL" required:"true"`
+	AccountURL  string `envconfig:"ACCOUNT_SERVICE_URL" required:"true"`
+	CatalogURL  string `envconfig:"CATALOG_SERVICE_URL" required:"true"`
 }
 
 func main() {
