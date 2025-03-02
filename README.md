@@ -5,6 +5,17 @@ Gommerz is Microservices Project with GraphQL API, PostgreSQL, and grpc
 
 This project demonstrates a microservices architecture using gRPC for inter-service communication and GraphQL as the API gateway. It includes services for account management, product catalog, and order processing.
 
+## Services architecture
+```mermaid
+graph TD
+    A[GraphQL API Gateway] -->|gRPC| B[Account Service]
+    A[GraphQL API Gateway] -->|gRPC| C[Catalog Service]
+    A[GraphQL API Gateway] -->|gRPC| D[Order Service]
+    B[Account Service] -->|PostgreSQL| E[(Account Database)]
+    C[Catalog Service] -->|Elasticsearch| F[(Catalog Database)]
+    D[Order Service] -->|PostgreSQL| G[(Order Database)]
+```
+
 ## Project Structure
 
 The project consists of the following main components:
