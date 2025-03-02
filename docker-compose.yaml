@@ -6,7 +6,7 @@ services:
     depends_on:
       - account_db
     environment:
-      DATABASE_URL: postgres://akhil:123456@account_db/akhil?sslmode=disable
+      DATABASE_URL: postgres://user:P@ssw0rd@account_db/account?sslmode=disable
     restart: on-failure
 
   catalog:
