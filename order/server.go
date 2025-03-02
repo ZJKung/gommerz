@@ -37,7 +37,6 @@ func ListenGRPC(s service, accountURL, catalogURL, port string) error {
 		catalogClient.Close()
 	}
 	// Create a new gRPC server
-	server := grpc.NewServer()
 	serv := grpc.NewServer()
 	pb.RegisterOrderServiceServer(serv, &grpcServer{
 		service:       s,
@@ -45,7 +44,7 @@ func ListenGRPC(s service, accountURL, catalogURL, port string) error {
 		catalogClient: catalogClient,
 	})
 	// Start the gRPC server
-	return server.Serve(lis)
+	return serv.Serve(lis)
 }
 func (s *grpcServer) PostOrder(ctx context.Context, r *pb.PostOrderRequest) (*pb.PostOrderResponse, error) {
 	// Check if account exists

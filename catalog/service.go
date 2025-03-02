@@ -7,11 +7,11 @@ import (
 )
 
 type Service interface {
-	CreateProduct(ctx context.Context, name, description string, price float64) (*Product, error)
-	GetProductById(ctx context.Context, id string) (*Product, error)
-	ListProducts(ctx context.Context, skip uint64, take uint64) ([]Product, error)
-	ListProductsWithIDs(ctx context.Context, ids []string) ([]Product, error)
-	SearchProduct(ctx context.Context, query string, skip uint64, take uint64) ([]Product, error)
+	PostProduct(ctx context.Context, name, description string, price float64) (*Product, error)
+	GetProduct(ctx context.Context, id string) (*Product, error)
+	GetProducts(ctx context.Context, skip uint64, take uint64) ([]Product, error)
+	GetProductsByIDs(ctx context.Context, ids []string) ([]Product, error)
+	SearchProducts(ctx context.Context, query string, skip uint64, take uint64) ([]Product, error)
 }
 
 type Product struct {
@@ -22,55 +22,44 @@ type Product struct {
 }
 
 type catalogService struct {
-	repo Repository
+	repository Repository
 }
 
-func NewService(repo Repository) *catalogService {
-	return &catalogService{repo}
+func NewService(r Repository) Service {
+	return &catalogService{r}
 }
 
-func (s *catalogService) CreateProduct(ctx context.Context, name, description string, price float64) (*Product, error) {
-	product := &Product{
-		ID:          ksuid.New().String(),
+func (s *catalogService) PostProduct(ctx context.Context, name, description string, price float64) (*Product, error) {
+	p := &Product{
 		Name:        name,
 		Description: description,
 		Price:       price,
+		ID:          ksuid.New().String(),
 	}
-	err := s.repo.PutProduct(ctx, *product)
-	if err != nil {
-		return &Product{}, err
+	if err := s.repository.PutProduct(ctx, *p); err != nil {
+		return nil, err
 	}
-	return product, nil
+	return p, nil
 }
 
-func (s *catalogService) GetProductById(ctx context.Context, id string) (*Product, error) {
-	product, err := s.repo.GetProductById(ctx, id)
-	if err != nil {
-		return &Product{}, err
-	}
-	return product, nil
+func (s *catalogService) GetProduct(ctx context.Context, id string) (*Product, error) {
+	return s.repository.GetProductByID(ctx, id)
 }
 
-func (s *catalogService) ListProducts(ctx context.Context, skip uint64, take uint64) ([]Product, error) {
-	products, err := s.repo.ListProducts(ctx, skip, take)
-	if err != nil {
-		return []Product{}, err
+func (s *catalogService) GetProducts(ctx context.Context, skip uint64, take uint64) ([]Product, error) {
+	if take > 100 || (skip == 0 && take == 0) {
+		take = 100
 	}
-	return products, nil
+	return s.repository.ListProducts(ctx, skip, take)
 }
 
-func (s *catalogService) ListProductsWithIDs(ctx context.Context, ids []string) ([]Product, error) {
-	products, err := s.repo.ListProductsWithIDs(ctx, ids)
-	if err != nil {
-		return []Product{}, err
-	}
-	return products, nil
+func (s *catalogService) GetProductsByIDs(ctx context.Context, ids []string) ([]Product, error) {
+	return s.repository.ListProductsWithIDs(ctx, ids)
 }
 
-func (s *catalogService) SearchProduct(ctx context.Context, query string, skip uint64, take uint64) ([]Product, error) {
-	products, err := s.repo.SearchProduct(ctx, query, skip, take)
-	if err != nil {
-		return []Product{}, err
+func (s *catalogService) SearchProducts(ctx context.Context, query string, skip uint64, take uint64) ([]Product, error) {
+	if take > 100 || (skip == 0 && take == 0) {
+		take = 100
 	}
-	return products, nil
+	return s.repository.SearchProducts(ctx, query, skip, take)
 }

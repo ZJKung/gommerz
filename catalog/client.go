@@ -18,7 +18,7 @@ func NewClient(url string) (*Client, error) {
 		return nil, err
 	}
 	return &Client{
-		conn:    conn,
+	conn:    conn,
 		service: pb.NewCatalogServiceClient(conn),
 	}, nil
 }

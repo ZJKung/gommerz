@@ -1,8 +1,10 @@
+//go:generate protoc ./catalog.proto --go_out=plugins=grpc:./pb
 package catalog
 
 import (
 	"context"
 	"fmt"
+	"log"
 	"net"
 
 	"github.com/zjkung/gommerz/catalog/pb"
@@ -25,38 +27,62 @@ func ListenGRPC(s Service, port int) error {
 	return serv.Serve(lis)
 }
 
-func (s *grpcServer) PostProduct(ctx context.Context, req *pb.PostProductRequest) (*pb.PostProductResponse, error) {
-	p, err := s.service.CreateProduct(ctx, req.Name, req.Description, req.Price)
+func (s *grpcServer) PostProduct(ctx context.Context, r *pb.PostProductRequest) (*pb.PostProductResponse, error) {
+	p, err := s.service.PostProduct(ctx, r.Name, r.Description, r.Price)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
-	return &pb.PostProductResponse{Product: &pb.Product{Id: p.ID, Name: p.Name, Description: p.Description, Price: p.Price}}, nil
+	return &pb.PostProductResponse{Product: &pb.Product{
+		Id:          p.ID,
+		Name:        p.Name,
+		Description: p.Description,
+		Price:       p.Price,
+	}}, nil
 }
 
-func (s *grpcServer) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb.GetProductResponse, error) {
-	p, err := s.service.GetProductById(ctx, req.Id)
+func (s *grpcServer) GetProduct(ctx context.Context, r *pb.GetProductRequest) (*pb.GetProductResponse, error) {
+	p, err := s.service.GetProduct(ctx, r.Id)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
-	return &pb.GetProductResponse{Product: &pb.Product{Id: p.ID, Name: p.Name, Description: p.Description, Price: p.Price}}, nil
+	return &pb.GetProductResponse{
+		Product: &pb.Product{
+			Id:          p.ID,
+			Name:        p.Name,
+			Description: p.Description,
+			Price:       p.Price,
+		},
+	}, nil
 }
-func (s *grpcServer) GetProducts(ctx context.Context, req *pb.GetProductsRequest) (*pb.GetProductsResponse, error) {
 
-	var products []Product
+func (s *grpcServer) GetProducts(ctx context.Context, r *pb.GetProductsRequest) (*pb.GetProductsResponse, error) {
+	var res []Product
 	var err error
-	if req.Query != "" {
-		products, err = s.service.SearchProduct(ctx, req.Query, req.Skip, req.Take)
-	} else if len(req.Ids) > 0 {
-		products, err = s.service.ListProductsWithIDs(ctx, req.Ids)
+	if r.Query != "" {
+		res, err = s.service.SearchProducts(ctx, r.Query, r.Skip, r.Take)
+	} else if len(r.Ids) != 0 {
+		res, err = s.service.GetProductsByIDs(ctx, r.Ids)
 	} else {
-		products, err = s.service.ListProducts(ctx, req.Skip, req.Take)
+		res, err = s.service.GetProducts(ctx, r.Skip, r.Take)
 	}
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
-	resp := &pb.GetProductsResponse{Products: make([]*pb.Product, 0)}
-	for _, p := range products {
-		resp.Products = append(resp.Products, &pb.Product{Id: p.ID, Name: p.Name, Description: p.Description, Price: p.Price})
+
+	products := []*pb.Product{}
+	for _, p := range res {
+		products = append(
+			products,
+			&pb.Product{
+				Id:          p.ID,
+				Name:        p.Name,
+				Description: p.Description,
+				Price:       p.Price,
+			},
+		)
 	}
-	return resp, nil
+	return &pb.GetProductsResponse{Products: products}, nil
 }
