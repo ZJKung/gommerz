@@ -10,7 +10,7 @@ import (
 )
 
 type Config struct {
-	DatebaseURL string `envconfig:"DATABASE_URL" required:"true"`
+	DatabaseURL string `envconfig:"DATABASE_URL" required:"true"`
 	GRPCPort    int    `envconfig:"GRPC_PORT" default:"8080"`
 }
 
@@ -22,7 +22,7 @@ func main() {
 	}
 	var r account.Repository
 	retry.ForeverSleep(2*time.Second, func(_ int) (err error) {
-		r, err = account.NewPostgresRepository(cfg.DatebaseURL)
+		r, err = account.NewPostgresRepository(cfg.DatabaseURL)
 		if err != nil {
 			log.Println(err)
 		}

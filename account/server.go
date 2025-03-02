@@ -14,6 +14,7 @@ type grpcServer struct {
 	service Service
 }
 
+
 func NewService(r Repository) Service {
 	return &accountService{r}
 }
@@ -23,6 +24,7 @@ func ListenGRPC(s Service, port int) error {
 		return err
 	}
 	serv := grpc.NewServer()
+	pb.RegisterAccountServiceServer(serv, &grpcServer{s})
 	reflection.Register(serv)
 	return serv.Serve(lis)
 }

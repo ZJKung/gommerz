@@ -26,9 +26,7 @@ func main() {
 		log.Fatal(err)
 	}
 	http.Handle("/graphql", handler.GraphQL(s.ToExecutableSchema()))
-	http.Handle("/playground", handler.Playground("akhil", "/graphql"))
-	// http.Handle("/graphql", handler.New(s.ToExecutableSchema()))
-	// http.Handle("/playground", playground.Handler("GraphQL playground", "/graphql"))
+	http.Handle("/playground", handler.Playground("gommerz", "/graphql"))
 
 	log.Println("connect to http://localhost:8080/playground for GraphQL playground")
 	log.Fatal(http.ListenAndServe(":8080", nil))
