@@ -6,7 +6,7 @@ import (
 	"errors"
 	"log"
 
-	elastic "gopkg.in/olivere/elastic.v5"
+	elastic "github.com/olivere/elastic/v7"
 )
 
 var (
@@ -71,7 +71,7 @@ func (r *elasticRepository) GetProductByID(ctx context.Context, id string) (*Pro
 		return nil, ErrNotFound
 	}
 	p := productDocument{}
-	if err = json.Unmarshal(*res.Source, &p); err != nil {
+	if err = json.Unmarshal(res.Source, &p); err != nil {
 		return nil, err
 	}
 	return &Product{
@@ -95,7 +95,7 @@ func (r *elasticRepository) ListProducts(ctx context.Context, skip, take uint64)
 	products := []Product{}
 	for _, hit := range res.Hits.Hits {
 		p := productDocument{}
-		if err = json.Unmarshal(*hit.Source, &p); err == nil {
+		if err = json.Unmarshal(hit.Source, &p); err == nil {
 			products = append(products, Product{
 				ID:          hit.Id,
 				Name:        p.Name,
@@ -127,7 +127,7 @@ func (r *elasticRepository) ListProductsWithIDs(ctx context.Context, ids []strin
 	products := []Product{}
 	for _, doc := range res.Docs {
 		p := productDocument{}
-		if err = json.Unmarshal(*doc.Source, &p); err == nil {
+		if err = json.Unmarshal(doc.Source, &p); err == nil {
 			products = append(products, Product{
 				ID:          doc.Id,
 				Name:        p.Name,
@@ -152,7 +152,7 @@ func (r *elasticRepository) SearchProducts(ctx context.Context, query string, sk
 	products := []Product{}
 	for _, hit := range res.Hits.Hits {
 		p := productDocument{}
-		if err = json.Unmarshal(*hit.Source, &p); err == nil {
+		if err = json.Unmarshal(hit.Source, &p); err == nil {
 			products = append(products, Product{
 				ID:          hit.Id,
 				Name:        p.Name,
