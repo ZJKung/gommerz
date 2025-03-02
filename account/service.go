@@ -3,7 +3,7 @@ package account
 import (
 	"context"
 
-	"github.com/google/uuid"
+	"github.com/segmentio/ksuid"
 )
 
 type Service interface {
@@ -27,7 +27,7 @@ func newService(r Repository) *accountService {
 
 func (s *accountService) PostAccount(ctx context.Context, name string) (*Account, error) {
 	account := &Account{
-		ID:   uuid.New().String(),
+		ID:   ksuid.New().String(),
 		Name: name,
 	}
 

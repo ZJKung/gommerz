@@ -14,8 +14,7 @@ services:
       context: .
       dockerfile: ./catalog/app.dockerfile
     depends_on:
-      catalog_db:
-        condition: service_healthy
+      - catalog_db
     environment:
       DATABASE_URL: http://catalog_db:9200
     restart: on-failure
